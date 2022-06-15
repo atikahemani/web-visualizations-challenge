@@ -34,12 +34,12 @@ function createScatter(id) {
     d3.json(url).then(function(data) {
         console.log(data);
         let ids= data.samples[0].otu_ids;
-        let x= data.samples.filter(i=>i.id==id)
-        console.log(x)
+        // let x= data.samples.filter(i=>i.id==id)
+        // console.log(x)
         console.log(ids)
         let sample_values=data.samples[0].sample_values.slice(0,10).reverse();
-        let sample_values_1=x.sample_values.slice(0,10).reverse();
-        console.log(sample_values_1);
+        // let sample_values_1=x.sample_values.slice(0,10).reverse();
+        // console.log(sample_values_1);
         
         let sample_values_all=data.samples[0].sample_values
         console.log(sample_values)

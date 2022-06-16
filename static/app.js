@@ -1,138 +1,119 @@
-// init();  
-  
 const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
+
 function init(){
     // Fetch the JSON data and console log it
-d3.json(url).then(function(data) {
-  console.log(data);    
-let names = data.names;
-  console.log(data.names);
+        d3.json(url).then(function(data) {
+        console.log(data);    
+        let names = data.names;
+        
+        
+        
+        for(let i=0; i<names.length; i++){
+            let option_sel = d3.select("#selDataset")
+            option_sel.append("option").text(names[i]).attr("value",names[i]);
+        }       
 
-for(let i=0; i<names.length; i++){
-    let option_sel = d3.select("#selDataset")
-    option_sel.append("option").text(names[i]).attr("value",names[i]);
-}})};
- 
-init()
-
-
-// // // pulling in the data using d3
-// // const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
-
-// // // Fetch the JSON data and console log it
-// // d3.json(url).then(function(data) {
-// //   console.log(data);
-// // });
-
-// //bar chart is in the init function 
-
-// function init(){
-
-// }
-
-// //how to define variables above for each graph
-// // function build_charts(sample) {
-// function init(){
-  
-  
-
-//   const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
-
-//   // Fetch the JSON data and console log it
-//   d3.json(url).then(function(data) {
-//     console.log(data);
-//   });
-//   let samples = data.samples;
-//   let result_array= samples.filter(sampleobject=>sampleobject.id==sample);
-//   let result= result_array[0];
-//   let otu_ids=result.otu_ids;
-//   let otu_labels=result.otu_labels;
-//   let sample_values=result.sample_values;
-
-//   let right_ticks=otu_ids.slice(0,10).map(otuid=>`otu ${otuid}`).reverse();
-//   let bar_data=[{
-//     y:right_ticks,
-//     x:sample_values.slick(0,10).reverse(),
-//     text: otu_labels.slick(0,10).reverse(),
-//     type:"bar",
-//     orientation:"h"
-//   }];
-//   let bar_layout={title:"Top 10 OTUS",margin:{t:30,l:150}};
-//   Plotly.newPlot("bar",bar_data,bar_layout);
-
-//   }
+        createScatter("940");
+        createBar("940");
+        createSummary("940");
+    }
+)};
 
 
-// function init(){
-//   let selector=d3.select("seldataset");
-//   const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
+function optionChanged(newID){
+    // code that updates graphics
+    // one way is to recall each function
+    createScatter(newID);
+    createBar(newID);
+    createSummary(newID);
+    console.log(newID)
+}
 
-//   // Fetch the JSON data and console log it
-// d3.json(url).then(function(data) {
-//     console.log(data);
-//     let sample_names=data.names;
-//   sample_names.forEach((sample) => {
-//     selector.append("option").text(sample).property("value",sample);});
+function createScatter(id) {
+    //read in sample data
+    d3.json(url).then(function(data) {
+        console.log(data);
+        let x= data.samples.filter(i=>i.id==id)
+        console.log(x)
+        let ids=x[0].otu_ids
+        console.log(ids)
+        let sample_values_1=x[0].sample_values.slice(0,10).reverse();
+        console.log(sample_values_1);
+        let sample_values_all=x[0].sample_values
+        console.log(sample_values_all)
+        let labels=x[0].otu_labels.slice(0,10).reverse();
+        console.log(labels)
+        let top_ids= x[0].otu_ids.slice(0,10).reverse();
+        let OTU_id = top_ids.map(x => "OTU " + x);
 
-//   build_charts(sample_names[0]);
-// });}
-// init();
+        let bubble_data=[{
+                x:ids,
+                y: sample_values_all,
+                mode: "markers",
+                marker:{
+                    size:sample_values_all,
+                    color:ids
+                },
+                
+              }];
+              let bubble_layout={
+                  
+                  xaxis:{title:"OTU ID"},
+                  height:600,
+                  width:1000
+                };
+              Plotly.newPlot("bubble",bubble_data,bubble_layout);
+
+              console.log(`This function generates scatter plot of ${id} `)
 
 
-// let names = ["Mark", "James", "Mona", "Lisa"];
-// for(let i=0; i<names.length; i++){
-//     let option_sel = d3.select("#selDataset")
-//     option_sel.append("option").text(names[i]).attr("value",names[i]);
-// }
+})}
 
-// // Add function to bottom of Activity 3 JS script
-// function alertMe(){
+function createBar(id) {
+    //read in sample data
+    d3.json(url).then(function(data) {
+        console.log(data);
+        let x= data.samples.filter(i=>i.id==id)
+        let ids=x[0].id
+        console.log(ids)
+        let sample_values=x[0].sample_values.slice(0,10).reverse();
+        let sample_values_all=x[0].sample_values
+        console.log(sample_values)
+        let labels=x[0].otu_labels.slice(0,10).reverse();
+        console.log(labels)
+        //need top 10 otu ids for the graphs
+        let top_ids= x[0].otu_ids.slice(0,10).reverse();
+        let OTU_id = top_ids.map(x => "OTU " + x);
 
-//   // Below, two methods for getting the select element value
-//   // Select DOM node
-//   let val = d3.select("#cars").node().value;
-//   console.log(`Node Selection is ${val}`);
-//   alert(`Node Selection is ${val}`);
+        let bar_data=[{
+            x:sample_values,
+            y: OTU_id,
+            text: labels,
+            type:"bar",
+            orientation:"h"
+  }];
+            let bar_layout={title:"Top 10 OTUS",margin:{t:30,l:150}};
+            Plotly.newPlot("bar",bar_data,bar_layout);
 
-//   // Select the element property
-//   let valAlt = d3.select("#cars").property("value");
-//   console.log(`Property Selection is ${valAlt}`);
-//   alert(`Property Selection is ${valAlt}`);
-// }
-// //examples from HW
+            console.log(`This function generates bar chart of ${id} `)
 
-// // function init() {
-// //   data = [{
-// //     x: [1, 2, 3, 4, 5],
-// //     y: [1, 2, 4, 8, 16] }];
+        })}
 
-// //   Plotly.newPlot("bar", data);
-// // }
 
-// // d3.selectAll("#selDataset").on("change", updatePlotly);
+function createSummary(id){
+    d3.json(url).then(function(data) {
+        console.log(data);    
+        let demographic_data = data.metadata.filter(i=>i.id==id);
+        console.log(`this is demo info ${demographic_data[0]}`);
+        var panel= d3.select("#sample-metadata");
+        panel.html("");
+        Object.entries(demographic_data[0]).forEach(([key,value])=>{
+            let option_select = d3.select("#sample-metadata");
+            option_select.append("p").text(`${key}: ${value}`);
 
-// // function updatePlotly() {
-// //   // Use D3 to select the dropdown menu
-// //   let dropdownMenu = d3.select("#selDataset");
-// //   // Assign the value of the dropdown menu option to a variable
-// //   let dataset = dropdownMenu.property("value");
+        
+        })
+})}
+init();
 
-// //   // Initialize x and y arrays
-// //   let x = [];
-// //   let y = [];
-
-// //   if (dataset === 'dataset1') {
-// //     x = [1, 2, 3, 4, 5];
-// //     y = [1, 2, 4, 8, 16];
-// //   }
-
-// //   else if (dataset === 'dataset2') {
-// //     x = [10, 20, 30, 40, 50];
-// //     y = [1, 10, 100, 1000, 10000];
-// //   }
-
-// //   // Note the extra brackets around 'x' and 'y'
-// //   Plotly.restyle("plot", "x", [x]);
-// //   Plotly.restyle("plot", "y", [y]);
-// // }
 
